@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"path"
 
 	"github.com/casimir/xdg-go"
@@ -114,8 +115,6 @@ func fetchImage(url string) string {
 		panic(err)
 	}
 
-	// Remove temporary file
-	// os.Remove(tmpfile.Name())
 	return tmpfile.Name()
 }
 
@@ -126,5 +125,7 @@ func main() {
 	cfmt.Println("Picture:", data.Picture)
 
 	profile := fetchImage(data.Picture)
+	defer os.Remove(profile)
+
   cfmt.Println(profile)
 }
