@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"image/jpeg"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 	"path"
 
 	"github.com/casimir/xdg-go"
+	"github.com/dolmen-go/kittyimg"
 	"github.com/i582/cfmt/cmd/cfmt"
 	"github.com/nbd-wtf/go-nostr"
 	"github.com/nbd-wtf/go-nostr/nip19"
@@ -93,8 +95,7 @@ func parseContent(content string) (data Data) {
 	return data
 }
 
-func fetchImage(url string) string {
-	cfmt.Println("Fetching image from", url)
+func fetchImg(url string) string {
 	resp, err := http.Get(url)
 	filename := path.Base(url)
 	if err != nil {
@@ -118,14 +119,28 @@ func fetchImage(url string) string {
 	return tmpfile.Name()
 }
 
+func displayImg(imgPath string) {
+	f, err := os.Open(imgPath)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	img, err := jpeg.Decode(f)
+	if err != nil {
+		panic(err)
+	}
+
+	kittyimg.Fprint(os.Stdout, img)
+}
+
 func main() {
 	relayUrl, npub := readConfig()
 	event := getProfile(relayUrl, npub)
 	data := parseContent(event.Content)
-	cfmt.Println("Picture:", data.Picture)
 
-	profile := fetchImage(data.Picture)
-	defer os.Remove(profile)
+	profilePath := fetchImg(data.Picture)
+	defer os.Remove(profilePath)
 
-  cfmt.Println(profile)
+  displayImg(profilePath)
 }
