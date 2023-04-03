@@ -2,6 +2,11 @@ package main
 
 import (
 	"context"
+	"encoding/json"
+	"io"
+	"io/ioutil"
+	"net/http"
+	"path"
 
 	"github.com/casimir/xdg-go"
 	"github.com/i582/cfmt/cmd/cfmt"
@@ -65,11 +70,61 @@ func getProfile(relayUrl, npub string) (event *nostr.Event) {
 	for ev := range sub.Events {
 		return ev
 	}
-  return nil
+	return nil
+}
+
+type Data struct {
+	Name    string `json:"name"`
+	About   string `json:"about"`
+	Picture string `json:"picture"`
+	Banner  string `json:"banner"`
+	Nip05   string `json:"nip05"`
+	Lud06   string `json:"lud06"`
+	Lud16   string `json:"lud16"`
+}
+
+func parseContent(content string) (data Data) {
+	err := json.Unmarshal([]byte(content), &data)
+	if err != nil {
+		cfmt.Println("Error parsing JSON:", err)
+		return
+	}
+	return data
+}
+
+func fetchImage(url string) string {
+	cfmt.Println("Fetching image from", url)
+	resp, err := http.Get(url)
+	filename := path.Base(url)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	// Create temporary file
+	tmpfile, err := ioutil.TempFile("", "*-"+filename)
+	if err != nil {
+		panic(err)
+	}
+	defer tmpfile.Close()
+
+	// Write file contents to temporary file
+	_, err = io.Copy(tmpfile, resp.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	// Remove temporary file
+	// os.Remove(tmpfile.Name())
+	return tmpfile.Name()
 }
 
 func main() {
 	relayUrl, npub := readConfig()
-  event := getProfile(relayUrl, npub)
-	cfmt.Println(event)
+	event := getProfile(relayUrl, npub)
+	data := parseContent(event.Content)
+	cfmt.Println("Picture:", data.Picture)
+
+	profile := fetchImage(data.Picture)
+  cfmt.Println(profile)
 }
