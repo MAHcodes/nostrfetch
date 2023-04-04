@@ -131,7 +131,9 @@ func displayImg(imgPath string) {
 		panic(err)
 	}
 
-	kittyimg.Fprint(os.Stdout, img)
+	cfmt.Print("\n")
+	kittyimg.Fprintln(os.Stdout, img)
+	cfmt.Print("\n")
 }
 
 func main() {
@@ -142,5 +144,54 @@ func main() {
 	profilePath := fetchImg(data.Picture)
 	defer os.Remove(profilePath)
 
-  displayImg(profilePath)
+	displayImg(profilePath)
+
+	relayStyle := "yellow|italic"
+	linesStyle := "blue"
+	titleStyle := "green|bold"
+	valueStyle := "magenta"
+
+	colors := [16]string{
+		"black",
+		"red",
+		"lightRed",
+		"green",
+		"lightGreen",
+		"yellow",
+		"lightYellow",
+		"blue",
+		"lightBlue",
+		"magenta",
+		"lightMagenta",
+		"cyan",
+		"lightCyan",
+		"white",
+		"gray",
+	}
+
+	cfmt.Printf("{{╭───────··}}::%s {{%s}}::%s {{··───────\n}}::%s", linesStyle, relayUrl, relayStyle, linesStyle)
+	if data.Name != "" {
+		cfmt.Printf("{{├─·}}::%s {{Name:}}::%s {{%s}}::%s\n", linesStyle, titleStyle, data.Name, valueStyle)
+	}
+	if data.About != "" {
+		cfmt.Printf("{{├─·}}::%s {{About:}}::%s {{%s}}::%s\n", linesStyle, titleStyle, data.About, valueStyle)
+	}
+	if data.Lud16 != "" {
+		cfmt.Printf("{{├─·}}::%s {{Lud16:}}::%s {{%s}}::%s\n", linesStyle, titleStyle, data.Lud16, valueStyle)
+	}
+	if data.Lud06 != "" {
+		cfmt.Printf("{{├─·}}::%s {{Lud06:}}::%s {{%s}}::%s\n", linesStyle, titleStyle, data.Lud06, valueStyle)
+	}
+	if data.Nip05 != "" {
+		cfmt.Printf("{{├─·󰞑}}::%s {{Nip05:}}::%s {{%s}}::%s\n", linesStyle, titleStyle, data.Nip05, valueStyle)
+	}
+	cfmt.Printf("{{├─·󰌋}}::%s {{Npub:}}::%s {{%s}}::%s\n", linesStyle, titleStyle, npub, valueStyle)
+	cfmt.Printf("{{╰──··}}::%s", linesStyle)
+
+	for _, color := range colors {
+		if color != "" {
+			cfmt.Printf("{{·─}}::%s", color)
+		}
+	}
+	cfmt.Print("\n\n")
 }
