@@ -3,6 +3,7 @@
 Share your [Nostr](https://github.com/nostr-protocol/nostr) profile in your screenshots on [r/unixporn](https://www.reddit.com/r/unixporn/)
 
 ![nostrfetch_showcase](https://user-images.githubusercontent.com/69465962/229657789-5b5bca34-293e-4e44-95b2-94d7971011b3.png)
+![nostrfetch_showcase](https://user-images.githubusercontent.com/69465962/229674237-abcff547-62d3-4110-93ac-ec767d9c5968.png)
 
 ## 📝 Notes
 - Profile preview is only supported on [Kitty](https://github.com/kovidgoyal/kitty) terminal emulator.
